@@ -344,8 +344,8 @@ fun generateService(url: String) {
                                         )
                                     )
 
+                                    annotationBuilder.addMember("value", "\$S", parameterName)
                                     if (!parameterRequired) {
-                                        annotationBuilder.addMember("value", "\$S", parameterName)
                                         annotationBuilder.addMember("required", "\$L", false)
                                     }
 
@@ -476,9 +476,8 @@ fun generateEvent(url: String) {
             val json = allElement.nextElementSiblings().find { it.tagName() == "pre" }!!.text()
             val joinToString = json.lines()
                 .filter { !it.trimStart().startsWith("#") && !it.trimStart().startsWith("//") }
-                .joinToString("\n")
+                .joinToString("\n").replace("\n", "").replace(" ", "").replace(",}", "}")
             val jsonText = ObjectMapper().readTree(joinToString)
-
             val type = TypeSpec.recordBuilder(
                 jsonText.get("d").get("extra").get("type")?.let {
                     when (it.nodeType) {
